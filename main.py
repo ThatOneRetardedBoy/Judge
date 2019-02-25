@@ -1,3 +1,5 @@
+#!/bin/python
+
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk
@@ -19,7 +21,7 @@ class ImagePrinter:
         self.canvas = Canvas(self.root, width=width, height=height)
         self.canvas.pack()
         img = Image.open(name_image)
-        img = img.resize((width, height), Image.ANTIALIAS)
+        #img = img.resize((width, height), Image.ANTIALIAS)
         self.canvas.imageObject = ImageTk.PhotoImage(img)
         self.canvas.create_image(width/2, height/2, image=self.canvas.imageObject)
         Label(self.root, text="Number of insects found: "+str(number_insects)).pack()
@@ -60,7 +62,7 @@ class Decider:
         self.images = []
         for name in self.image_names:
             img = Image.open(name)
-            img = img.resize((width, height), Image.ANTIALIAS)
+            #img = img.resize((width, height), Image.ANTIALIAS)
             self.images.append(ImageTk.PhotoImage(img))
         self.id_image = 0
 
@@ -132,11 +134,12 @@ class Decider:
 def choose_directory():
     global path_directory
     path_directory = filedialog.askdirectory()
-    nameDirectory.configure(text="Chosen directory: " + path_directory)
+    nameDirectory.config(text="Chosen directory: " + path_directory)
 
 
 def get_all_images():
     list_images = os.listdir(path_directory)
+    os.chdir(path_directory)
     result = []
     for file in list_images:
         if "jpg" in file or "png" in file or "webp" in file or "jpeg" in file:
@@ -178,6 +181,7 @@ if __name__ == "__main__":
     Button(root, text="Launch study", command=decider).pack()
     Button(root, text='Choose directory', command=choose_directory).pack()
     Button(root, text='Launch docker script', command=docker).pack()
-    nameDirectory = Label(root).pack()
+    nameDirectory = Label(root)
+    nameDirectory.pack()
     root.config(menu=menubar)
     root.mainloop()
