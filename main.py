@@ -12,7 +12,7 @@ import subprocess
 width = 750
 height = 750
 path_directory = os.getcwd()
-
+resizing = False;
 
 class ImagePrinter:
     def __init__(self, name_image, number_insects):
@@ -21,7 +21,8 @@ class ImagePrinter:
         self.canvas = Canvas(self.root, width=width, height=height)
         self.canvas.pack()
         img = Image.open(name_image)
-        #img = img.resize((width, height), Image.ANTIALIAS)
+        if resizing:
+            img = img.resize((width, height), Image.ANTIALIAS)
         self.canvas.imageObject = ImageTk.PhotoImage(img)
         self.canvas.create_image(width/2, height/2, image=self.canvas.imageObject)
         Label(self.root, text="Number of insects found: "+str(number_insects)).pack()
@@ -62,7 +63,8 @@ class Decider:
         self.images = []
         for name in self.image_names:
             img = Image.open(name)
-            #img = img.resize((width, height), Image.ANTIALIAS)
+            if resizing:
+                img = img.resize((width, height), Image.ANTIALIAS)
             self.images.append(ImageTk.PhotoImage(img))
         self.id_image = 0
 
@@ -156,12 +158,12 @@ def docker():
 
 
 def change_size_menu():
+    check_temp = IntVar()
     root_menu = Toplevel()
     Label(root_menu, text="Change size of height/width").pack()
     w = Spinbox(root_menu, from_=100, to=1000)
     w.pack()
     Button(root_menu, text="OK", command=lambda: change_size(int(w.get()), root_menu)).pack()
-
 
 def change_size(size, root_a):
     global width, height
@@ -169,6 +171,21 @@ def change_size(size, root_a):
     height = size
     root_a.destroy()
 
+def authorize_resizing():
+    check = IntVar()
+    root_menu = Toplevel()
+    Checkbutton(root_menu, text="Resizing", variable=check).pack()
+    Button(root_menu, text="OK", command=lambda: value(check, root_menu)).pack()
+
+def value(check,  root_a):
+    global resizing, width, height
+    if check.get():
+        resizing = True
+    else:
+        resizing = False
+        width = 750
+        height = 750
+    root_a.destroy()
 
 if __name__ == "__main__":
     root = Tk()
@@ -176,6 +193,7 @@ if __name__ == "__main__":
     menubar = Menu(root)
     filemenu = Menu(menubar, tearoff=0)
     filemenu.add_command(label="Change image size", command=change_size_menu)
+    filemenu.add_command(label="Resizing", command=authorize_resizing)
     menubar.add_cascade(label="Images", menu=filemenu)
     Label(root, text="JUDGE is the Ultimate Decider for Graphical Elements").pack()
     Button(root, text="Launch study", command=decider).pack()
