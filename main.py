@@ -78,6 +78,9 @@ class Decider:
         Button(self.root, text="Ok", command=lambda: self.update_image(True)).pack()
         Button(self.root, text="Not Ok", command=lambda: self.update_image(False)).pack()
 
+        self.progress = Label(self.root, text="Image 1/"+str(len(self.images)))
+        self.progress.pack()
+
     def update_image(self, value):
         # registering the data
         if not self.over:
@@ -89,6 +92,7 @@ class Decider:
         # printing the new image
         if len(self.image_names) > self.id_image+1:
             self.id_image += 1
+            self.progress.config(text="Image" + str(self.id_image) +"/"+str(len(self.images)))
             self.canvas.itemconfig(self.item, image=self.images[self.id_image])
         else:
             self.over = True
